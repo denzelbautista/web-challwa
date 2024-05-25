@@ -6,8 +6,9 @@ from datetime import datetime
 def current_time():
     return datetime.now().isoformat()
 
+""""
 class User(db.Model):
-    id = db.Column(db.String(36), primary_key=True, default=str(uuid.uuid4()), unique=True)
+    id = db.Column(db.String(36), primary_key=True, default=str(uuid.uuid4()), unique=True) # para uuid
     username = db.Column(db.String(80), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
 
@@ -15,23 +16,25 @@ class User(db.Model):
         return f'<User {self.username}>'
 
 """
+
 class Usuario(db.Model):
     __tablename__ = 'usuarios'
 
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String, unique=True, nullable=False)
+    id = db.Column(db.String(36), primary_key=True, default=str(uuid.uuid4()), unique=True)
     email = db.Column(db.String, unique=True, nullable=False)
     password_hash = db.Column(db.String, nullable=False)
     role = db.Column(db.Enum('comprador', 'vendedor', name='user_roles'), nullable=False)
+    # opcionales al momento de envio o editables en otro momento
     nombre_empresa = db.Column(db.String, nullable=True)
     telefono = db.Column(db.String, nullable=True)
     descripcion = db.Column(db.Text, nullable=True)
     nombre = db.Column(db.String, nullable=True)
     apellido = db.Column(db.String, nullable=True)
     direccion_envio = db.Column(db.String, nullable=True)
+    # fechas
     created_at = db.Column(db.String, default=current_time)
     updated_at = db.Column(db.String, default=current_time, onupdate=current_time)
-
+    # relaciones con otras tablas
     productos = db.relationship('Producto', back_populates='vendedor')
     pedidos = db.relationship('Pedido', back_populates='comprador')
     comentarios = db.relationship('Comentario', back_populates='usuario')
@@ -47,7 +50,7 @@ class Usuario(db.Model):
 class Producto(db.Model):
     __tablename__ = 'productos'
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.String(36), primary_key=True, default=str(uuid.uuid4()), unique=True)
     nombre = db.Column(db.String, nullable=False)
     descripcion = db.Column(db.Text, nullable=False)
     precio = db.Column(db.Numeric(10, 2), nullable=False)
@@ -73,7 +76,7 @@ class Producto(db.Model):
 class Pedido(db.Model):
     __tablename__ = 'pedidos'
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.String(36), primary_key=True, default=str(uuid.uuid4()), unique=True)
     comprador_id = db.Column(db.Integer, db.ForeignKey('usuarios.id'), nullable=False)
     total = db.Column(db.Numeric(10, 2), nullable=False)
     estado = db.Column(db.Enum('pendiente', 'en_proceso', 'completado', 'cancelado', name='order_status'), nullable=False)
@@ -95,7 +98,7 @@ class Pedido(db.Model):
 class LineaPedido(db.Model):
     __tablename__ = 'lineas_pedido'
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.String(36), primary_key=True, default=str(uuid.uuid4()), unique=True)
     pedido_id = db.Column(db.Integer, db.ForeignKey('pedidos.id'), nullable=False)
     producto_id = db.Column(db.Integer, db.ForeignKey('productos.id'), nullable=False)
     cantidad = db.Column(db.Integer, nullable=False)
@@ -119,7 +122,7 @@ class LineaPedido(db.Model):
 class Comentario(db.Model):
     __tablename__ = 'comentarios'
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.String(36), primary_key=True, default=str(uuid.uuid4()), unique=True)
     producto_id = db.Column(db.Integer, db.ForeignKey('productos.id'), nullable=False)
     usuario_id = db.Column(db.Integer, db.ForeignKey('usuarios.id'), nullable=False)
     contenido = db.Column(db.Text, nullable=False)
@@ -137,5 +140,3 @@ class Comentario(db.Model):
             'contenido': self.contenido,
             # ... otros campos relevantes ...
         }
-
-"""
