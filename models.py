@@ -6,7 +6,8 @@ from datetime import datetime
 def current_time():
     return datetime.now().isoformat()
 
-""""
+"""
+# modelo de ejemplo 
 class User(db.Model):
     id = db.Column(db.String(36), primary_key=True, default=str(uuid.uuid4()), unique=True) # para uuid
     username = db.Column(db.String(80), unique=True, nullable=False)
@@ -22,7 +23,7 @@ class Usuario(db.Model):
 
     id = db.Column(db.String(36), primary_key=True, default=str(uuid.uuid4()), unique=True)
     email = db.Column(db.String, unique=True, nullable=False)
-    password_hash = db.Column(db.String, nullable=False)
+    password = db.Column(db.String, nullable=False)
     role = db.Column(db.Enum('comprador', 'vendedor', name='user_roles'), nullable=False)
     # opcionales al momento de envio o editables en otro momento
     nombre_empresa = db.Column(db.String, nullable=True)
@@ -42,9 +43,10 @@ class Usuario(db.Model):
     def serialize(self):
         return {
             'id': self.id,
-            'username': self.username,
+            'nombre': self.nombre,
+            'apellido' : self.apellido,
             'email': self.email,
-            # ... otros campos relevantes ...
+            'role' : self.role.value
         }
 
 class Producto(db.Model):
@@ -57,9 +59,10 @@ class Producto(db.Model):
     categoria = db.Column(db.Enum('pescado', 'marisco', 'accesorios_nauticos', 'equipos_de_pesca', 'ropa_accesorios', name='product_categories'), nullable=False)
     stock = db.Column(db.Integer, nullable=False)
     vendedor_id = db.Column(db.Integer, db.ForeignKey('usuarios.id'), nullable=False)
+    # fechas
     created_at = db.Column(db.String, default=current_time)
     updated_at = db.Column(db.String, default=current_time, onupdate=current_time)
-
+    # relaciones con las otras tablas
     vendedor = db.relationship('Usuario', back_populates='productos')
     lineas_pedido = db.relationship('LineaPedido', back_populates='producto')
     comentarios = db.relationship('Comentario', back_populates='producto')
@@ -70,7 +73,9 @@ class Producto(db.Model):
             'nombre': self.nombre,
             'descripcion': self.descripcion,
             'precio': float(self.precio),  # Convertir a float si es necesario
-            # ... otros campos relevantes ...
+            'categoria' : self.categoria.value,
+            'stock' : self.stock,
+            'vendedor_id' : self.vendedor_id
         }
 
 class Pedido(db.Model):
@@ -80,9 +85,10 @@ class Pedido(db.Model):
     comprador_id = db.Column(db.Integer, db.ForeignKey('usuarios.id'), nullable=False)
     total = db.Column(db.Numeric(10, 2), nullable=False)
     estado = db.Column(db.Enum('pendiente', 'en_proceso', 'completado', 'cancelado', name='order_status'), nullable=False)
+    # fechas
     created_at = db.Column(db.String, default=current_time)
     updated_at = db.Column(db.String, default=current_time, onupdate=current_time)
-
+    # relaciones con las otras tablas
     comprador = db.relationship('Usuario', back_populates='pedidos')
     lineas_pedido = db.relationship('LineaPedido', back_populates='pedido')
 
@@ -91,8 +97,7 @@ class Pedido(db.Model):
             'id': self.id,
             'comprador_id': self.comprador_id,
             'total': float(self.total),  # Convertir a float si es necesario
-            'estado': self.estado,
-            # ... otros campos relevantes ...
+            'estado': self.estado.value
         }
 
 class LineaPedido(db.Model):
@@ -103,9 +108,10 @@ class LineaPedido(db.Model):
     producto_id = db.Column(db.Integer, db.ForeignKey('productos.id'), nullable=False)
     cantidad = db.Column(db.Integer, nullable=False)
     precio_unitario = db.Column(db.Numeric(10, 2), nullable=False)
+    # fechas
     created_at = db.Column(db.String, default=current_time)
     updated_at = db.Column(db.String, default=current_time, onupdate=current_time)
-
+    # relaciones con las otras tablas
     pedido = db.relationship('Pedido', back_populates='lineas_pedido')
     producto = db.relationship('Producto', back_populates='lineas_pedido')
 
@@ -116,7 +122,6 @@ class LineaPedido(db.Model):
             'producto_id': self.producto_id,
             'cantidad': self.cantidad,
             'precio_unitario': float(self.precio_unitario),  # Convertir a float si es necesario
-            # ... otros campos relevantes ...
         }
 
 class Comentario(db.Model):
@@ -126,9 +131,10 @@ class Comentario(db.Model):
     producto_id = db.Column(db.Integer, db.ForeignKey('productos.id'), nullable=False)
     usuario_id = db.Column(db.Integer, db.ForeignKey('usuarios.id'), nullable=False)
     contenido = db.Column(db.Text, nullable=False)
+    # fechas
     created_at = db.Column(db.String, default=current_time)
     updated_at = db.Column(db.String, default=current_time, onupdate=current_time)
-
+    # relaciones con las otras tablas
     producto = db.relationship('Producto', back_populates='comentarios')
     usuario = db.relationship('Usuario', back_populates='comentarios')
 
@@ -137,6 +143,5 @@ class Comentario(db.Model):
             'id': self.id,
             'producto_id': self.producto_id,
             'usuario_id': self.usuario_id,
-            'contenido': self.contenido,
-            # ... otros campos relevantes ...
+            'contenido': self.contenido
         }

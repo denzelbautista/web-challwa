@@ -1,43 +1,128 @@
 # main.py
 from flask import Flask, request, jsonify
+import sys
 from database import init_app, db
-from models import User
+from models import Usuario, Comentario, Pedido, LineaPedido, Producto
 
 app = Flask(__name__)
 init_app(app)
 
+
+@app.route('/usuarios', methods=['POST'])
+def create_usuario():
+    try:
+        data = request.json
+        email = data.get('email')
+        password = data.get('password')
+        role = data.get('role')
+
+        # Verifica que el rol sea válido
+        if role not in ('comprador', 'vendedor'):
+            return jsonify({'success': False, 'message': 'Rol no válido'}), 400
+
+        # Crea un nuevo usuario
+        nuevo_usuario = Usuario(
+            email=email, password=password, role=role)
+        db.session.add(nuevo_usuario)
+        db.session.commit()
+
+        return jsonify({'success': True, 'message': 'Usuario creado correctamente', 'id': nuevo_usuario.id}), 201
+    except Exception as e:
+        print(sys.exc_info())
+        db.session.rollback()
+        return jsonify({'success': False, 'message': 'Error creando usuario'}), 500
+    finally:
+        db.session.close()
+
+
+@app.route('/productos', methods=['POST'])
+def create_producto():
+    try:
+        data = request.json
+        nombre = data.get('nombre')
+        descripcion = data.get('descripcion')
+        precio = data.get('precio')
+        categoria = data.get('categoria')
+        stock = data.get('stock')
+        # Asegúrate de que este campo esté presente en el JSON
+        vendedor_id = data.get('vendedor_id')
+
+        # Verifica que los campos obligatorios estén presentes
+        if not (nombre and descripcion and precio and categoria and stock and vendedor_id):
+            return jsonify({'success': False, 'message': 'Campos obligatorios faltantes'}), 400
+
+        # Crea un nuevo producto
+        nuevo_producto = Producto(nombre=nombre, descripcion=descripcion, precio=precio,
+                                  categoria=categoria, stock=stock, vendedor_id=vendedor_id)
+        db.session.add(nuevo_producto)
+        db.session.commit()
+
+        return jsonify({'success': True, 'message': 'Pedido creado correctamente', 'id': nuevo_producto.id}), 201
+    except Exception as e:
+        print(sys.exc_info())
+        db.session.rollback()
+        return jsonify({'success': False, 'message': 'Error creando producto'}), 500
+    finally:
+        db.session.close()
+
+
+@app.route('/pedidos', methods=['POST'])
+def create_pedido():
+    try:
+        data = request.json
+        # Extrae los campos necesarios del JSON
+
+        # Crea un nuevo pedido
+        nuevo_pedido = Pedido(...)  # Completa con los campos adecuados
+        db.session.add(nuevo_pedido)
+        db.session.commit()
+
+        return jsonify({'success': True, 'message': 'Pedido creado correctamente'}), 201
+    except Exception as e:
+        print(sys.exc_info())
+        db.session.rollback()
+        return jsonify({'success': False, 'message': 'Error creando pedido'}), 500
+    finally:
+        db.session.close()
+
+
+@app.route('/pedidos/<string:pedido_id>/lineas_pedido', methods=['POST'])
+def create_linea_pedido(pedido_id):
+    try:
+        data = request.json
+        # Extrae los campos necesarios del JSON
+
+        # Verifica si el pedido existe
+        pedido = Pedido.query.get(pedido_id)
+        if not pedido:
+            return jsonify({'success': False, 'message': 'Pedido no encontrado'}), 404
+
+        # Crea una nueva línea de pedido
+        # Completa con los campos adecuados
+        nueva_linea_pedido = LineaPedido(...)
+        db.session.add(nueva_linea_pedido)
+        db.session.commit()
+
+        return jsonify({'success': True, 'message': 'Línea de pedido creada correctamente'}), 201
+    except Exception as e:
+        print(sys.exc_info())
+        db.session.rollback()
+        return jsonify({'success': False, 'message': 'Error creando línea de pedido'}), 500
+    finally:
+        db.session.close()
+
+
+if __name__ == '__main__':
+    app.run(debug=True)
+
+
+"""
 def fibo(n):
     if n == 0 or n == 1:
         return n
     else: 
         return fibo(n-1) + fibo(n-2)
 
-@app.route('/users', methods=['POST'])
-def create_user():
-    data = request.json
-    username = data.get('username')
-    email = data.get('email')
-
-    new_user = User(username=username, email=email)
-    db.session.add(new_user)
-    db.session.commit()
-
-    return jsonify({'message': 'User created successfully'})
-
-@app.route('/users', methods=['GET'])
-def get_users():
-    users = User.query.all()
-    return jsonify([{'id': user.id, 'username': user.username, 'email': user.email} for user in users])
-
-
-
-    
-
-
-if __name__ == '__main__':
-    app.run(debug=True)
-
-"""
 @app.route('/fibonacci/<number>',methods=['GET'])
 def get_nth_fibonacci(number):
 
