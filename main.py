@@ -1,38 +1,106 @@
 # main.py
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, abort
 import sys
 from database import init_app, db
+from flask import Flask, send_file, render_template
+from utilities import verificar_contrasena
 from models import Usuario, Comentario, Pedido, LineaPedido, Producto
 
 app = Flask(__name__)
 init_app(app)
 
+# Para la web
+
+
+@app.route("/")
+def index():
+    return render_template('index.html')
+
+
+# Para la API
 
 @app.route('/usuarios', methods=['POST'])
 def create_usuario():
+    list_errors = []
+    returned_code = 201
     try:
         data = request.json
-        email = data.get('email')
-        password = data.get('password')
         role = data.get('role')
 
-        # Verifica que el rol sea válido
-        if role not in ('comprador', 'vendedor'):
-            return jsonify({'success': False, 'message': 'Rol no válido'}), 400
+        if 'email' not in data:
+            list_errors.append('email requerido')
+        else:
+            email = data.get('email')
 
-        # Crea un nuevo usuario
-        nuevo_usuario = Usuario(
-            email=email, password=password, role=role)
-        db.session.add(nuevo_usuario)
-        db.session.commit()
+        if 'nombre' not in data:
+            list_errors.append('nombre requerido')
+        else:
+            nombre = data.get('nombre')
 
-        return jsonify({'success': True, 'message': 'Usuario creado correctamente', 'id': nuevo_usuario.id}), 201
+        if 'apellido' not in data:
+            list_errors.append('apellido requerido')
+        else:
+            apellido = data.get('apellido')
+
+        if 'role' not in data:
+            list_errors.append('rol requerido')
+        else:
+            role = data.get('role')
+
+            if role not in ('comprador', 'vendedor'):
+                list_errors.append('rol no valido')
+
+        if 'password' not in data:
+            list_errors.append('contraseña requerida')
+        else:
+            password = data.get('password')
+            if not verificar_contrasena(password):
+                list_errors.append('contraseña no cumple con los requisitos')
+
+        if len(list_errors) > 0:
+            returned_code = 400
+        else:
+
+            # Crea un nuevo usuario
+            nuevo_usuario = Usuario(
+                email=email, password=password, role=role, nombre=nombre, apellido=apellido)
+            db.session.add(nuevo_usuario)
+            db.session.commit()
+            nuevo_usuario_id = nuevo_usuario.id
+
     except Exception as e:
         print(sys.exc_info())
         db.session.rollback()
-        return jsonify({'success': False, 'message': 'Error creando usuario'}), 500
+        returned_code = 500
+
     finally:
         db.session.close()
+
+    if returned_code == 400:
+        return jsonify({'success': False, 'message': 'Error creando usuario', 'errores': list_errors}), returned_code
+
+    elif returned_code != 201:
+        abort(returned_code)
+    else:
+        return jsonify({'success': True, 'message': 'Usuario creado correctamente', 'id': nuevo_usuario_id}), 201
+
+
+@app.route('/usuarios/<string:usuario_id>', methods=['GET'])
+def get_usuario(usuario_id):
+    try:
+        # Busca el usuario en la base de datos por su ID
+        usuario = Usuario.query.get(usuario_id)
+
+        if not usuario:
+            return jsonify({'success': False, 'message': 'Usuario no encontrado'}), 404
+
+        # Serializa los datos del usuario
+        usuario_serializado = usuario.serialize()
+
+        return jsonify({'success': True, 'usuario': usuario_serializado}), 200
+    except Exception as e:
+        print(sys.exc_info())
+        return jsonify({'success': False, 'message': 'Error al obtener el usuario'}), 500
 
 
 @app.route('/productos', methods=['POST'])
@@ -64,6 +132,25 @@ def create_producto():
         return jsonify({'success': False, 'message': 'Error creando producto'}), 500
     finally:
         db.session.close()
+
+
+@app.route('/productos/<producto_id>', methods=['GET'])
+def get_producto(producto_id):
+    try:
+        # Verifica que el ID sea positivo
+        if producto_id <= 0:
+            return jsonify({'success': False, 'message': 'ID de producto no válido'}), 400
+
+        # Busca el producto por ID
+        producto = Producto.query.get(producto_id)
+        if not producto:
+            return jsonify({'success': False, 'message': 'Producto no encontrado'}), 404
+
+        # Devuelve los detalles del producto
+        return jsonify({'success': True, 'producto': producto.serialize()}), 200
+    except Exception as e:
+        print(sys.exc_info())
+        return jsonify({'success': False, 'message': 'Error al obtener el producto'}), 500
 
 
 @app.route('/pedidos', methods=['POST'])

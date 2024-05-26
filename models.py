@@ -21,7 +21,7 @@ class User(db.Model):
 class Usuario(db.Model):
     __tablename__ = 'usuarios'
 
-    id = db.Column(db.String(36), primary_key=True, default=str(uuid.uuid4()), unique=True)
+    id = db.Column(db.String(36), primary_key=True, default=lambda:str(uuid.uuid4()), unique=True)
     email = db.Column(db.String, unique=True, nullable=False)
     password = db.Column(db.String, nullable=False)
     role = db.Column(db.Enum('comprador', 'vendedor', name='user_roles'), nullable=False)
@@ -46,7 +46,7 @@ class Usuario(db.Model):
             'nombre': self.nombre,
             'apellido' : self.apellido,
             'email': self.email,
-            'role' : self.role.value
+            'role' : self.role
         }
 
 class Producto(db.Model):
