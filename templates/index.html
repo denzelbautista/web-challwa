@@ -42,12 +42,12 @@
             <!-- ***** Logo End ***** -->
             <!-- ***** Menu Start ***** -->
             <ul class="nav">
-              <li><a href="{{ url_for('index') }}" class="active">Inicio</a></li>
-              <li><a href="{{ url_for('shop') }}">Tienda</a></li>
-              <li><a href="{{ url_for('sell') }}">Vende ahora</a></li>
-              <li><a href="{{ url_for('fishes') }}">Conoce los peces</a></li>
-              <li><a href="{{ url_for('contact') }}">Contacto</a></li>
-              <li><a href="{{ url_for('register') }}">Registrate</a></li>
+              <li><a href="{{ url_for('views.index') }}" class="active">Inicio</a></li>
+              <li><a href="{{ url_for('views.shop') }}">Tienda</a></li>
+              <li><a href="{{ url_for('views.sell') }}">Vende ahora</a></li>
+              <li><a href="{{ url_for('views.fishes') }}">Conoce los peces</a></li>
+              <li><a href="{{ url_for('views.contact') }}">Contacto</a></li>
+              <li><a href="{{ url_for('views.register') }}">Registrate</a></li>
               <li><a href="#">Inicia sesion</a></li>
             </ul>
             <a class='menu-trigger'>
@@ -148,7 +148,7 @@
         </div>
         <div class="col-lg-6">
           <div class="main-button">
-            <a href="{{ url_for('shop') }}">Ver TODOS</a>
+            <a href="{{ url_for('views.shop') }}">Ver TODOS</a>
           </div>
         </div>
         <div class="col-lg-3 col-md-6">

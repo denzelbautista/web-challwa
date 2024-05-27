@@ -5,36 +5,14 @@ from database import init_app, db
 from flask import Flask, send_file, render_template
 from utilities import verificar_contrasena
 from models import Usuario, Comentario, Pedido, LineaPedido, Producto
+from views import views_bp
 
 app = Flask(__name__)
 init_app(app)
 
 # Para la web
 
-
-@app.route('/')
-def index():
-    return render_template('index.html')
-
-@app.route('/shop')
-def shop():
-    return render_template('shop.html')
-
-@app.route('/contact')
-def contact():
-    return render_template('contact.html')
-
-@app.route('/sell')
-def sell():
-    return render_template('sell.html')
-
-@app.route('/fishes')
-def fishes():
-    return render_template('fishes.html')
-
-@app.route('/register')
-def register():
-    return render_template('register.html')
+app.register_blueprint(views_bp)
 
 # Para la API
 
@@ -50,6 +28,10 @@ def create_usuario():
             list_errors.append('email requerido')
         else:
             email = data.get('email')
+            
+            if Usuario.query.filter_by(email=email).first():
+                list_errors.append('email ya está registrado')
+                
 
         if 'nombre' not in data:
             list_errors.append('nombre requerido')
