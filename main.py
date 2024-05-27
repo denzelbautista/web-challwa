@@ -3,9 +3,10 @@ from flask import Flask, request, jsonify, abort
 import sys
 from database import init_app, db
 from flask import Flask, send_file, render_template
-from utilities import verificar_contrasena
+
 from models import Usuario, Comentario, Pedido, LineaPedido, Producto
 from views import views_bp
+from users_controller import users_bp
 
 app = Flask(__name__)
 init_app(app)
@@ -13,77 +14,9 @@ init_app(app)
 # Para la web
 
 app.register_blueprint(views_bp)
+app.register_blueprint(users_bp)
 
 # Para la API
-
-@app.route('/usuarios', methods=['POST'])
-def create_usuario():
-    list_errors = []
-    returned_code = 201
-    try:
-        data = request.json
-        role = data.get('role')
-
-        if 'email' not in data:
-            list_errors.append('email requerido')
-        else:
-            email = data.get('email')
-            
-            if Usuario.query.filter_by(email=email).first():
-                list_errors.append('email ya está registrado')
-                
-
-        if 'nombre' not in data:
-            list_errors.append('nombre requerido')
-        else:
-            nombre = data.get('nombre')
-
-        if 'apellido' not in data:
-            list_errors.append('apellido requerido')
-        else:
-            apellido = data.get('apellido')
-
-        if 'role' not in data:
-            list_errors.append('rol requerido')
-        else:
-            role = data.get('role')
-
-            if role not in ('comprador', 'vendedor'):
-                list_errors.append('rol no valido')
-
-        if 'password' not in data:
-            list_errors.append('contraseña requerida')
-        else:
-            password = data.get('password')
-            if not verificar_contrasena(password):
-                list_errors.append('contraseña no cumple con los requisitos')
-
-        if len(list_errors) > 0:
-            returned_code = 400
-        else:
-
-            # Crea un nuevo usuario
-            nuevo_usuario = Usuario(
-                email=email, password=password, role=role, nombre=nombre, apellido=apellido)
-            db.session.add(nuevo_usuario)
-            db.session.commit()
-            nuevo_usuario_id = nuevo_usuario.id
-
-    except Exception as e:
-        print(sys.exc_info())
-        db.session.rollback()
-        returned_code = 500
-
-    finally:
-        db.session.close()
-
-    if returned_code == 400:
-        return jsonify({'success': False, 'message': 'Error creando usuario', 'errores': list_errors}), returned_code
-
-    elif returned_code != 201:
-        abort(returned_code)
-    else:
-        return jsonify({'success': True, 'message': 'Usuario creado correctamente', 'id': nuevo_usuario_id}), 201
 
 
 @app.route('/usuarios/<string:usuario_id>', methods=['GET'])

@@ -1,6 +1,7 @@
 # models.py
 from database import db
 import uuid
+import sys
 from datetime import datetime
 
 def current_time():
@@ -10,11 +11,11 @@ def current_time():
 # modelo de ejemplo 
 class User(db.Model):
     id = db.Column(db.String(36), primary_key=True, default=str(uuid.uuid4()), unique=True) # para uuid
-    username = db.Column(db.String(80), unique=True, nullable=False)
+    email = db.Column(db.String(80), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
 
     def __repr__(self):
-        return f'<User {self.username}>'
+        return f'<User {self.email}>'
 
 """
 
@@ -48,6 +49,27 @@ class Usuario(db.Model):
             'email': self.email,
             'role' : self.role
         }
+    
+    def __init__(self, email, password, nombre, apellido, role):
+        self.email = email
+        self.password = password
+        self.nombre = nombre
+        self.apellido = apellido
+    
+    def insert(self):
+        try:
+            db.session.add(self)
+            db.session.commit()
+            user_created_id = self.id
+        except Exception as e:
+            print(sys.exc_info())
+            print('e: ', e)
+            db.session.rollback()
+        finally:
+            db.session.close()
+        
+        return user_created_id
+    
 
 class Producto(db.Model):
     __tablename__ = 'productos'
