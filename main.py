@@ -12,10 +12,25 @@ init_app(app)
 # Para la web
 
 
-@app.route("/")
+@app.route('/')
 def index():
     return render_template('index.html')
 
+@app.route('/shop')
+def shop():
+    return render_template('shop.html')
+
+@app.route('/contact')
+def contact():
+    return render_template('contact.html')
+
+@app.route('/sell')
+def sell():
+    return render_template('sell.html')
+
+@app.route('/fishes')
+def fishes():
+    return render_template('fishes.html')
 
 # Para la API
 
