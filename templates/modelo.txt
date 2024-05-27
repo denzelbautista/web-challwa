@@ -1,0 +1,7 @@
+<!-- index.html -->
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Bienvenido a mi sitio web</h1>
+    <!-- Contenido específico de la página -->
+{% endblock %}
