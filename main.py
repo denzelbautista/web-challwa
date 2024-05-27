@@ -32,6 +32,10 @@ def sell():
 def fishes():
     return render_template('fishes.html')
 
+@app.route('/register')
+def register():
+    return render_template('register.html')
+
 # Para la API
 
 @app.route('/usuarios', methods=['POST'])
