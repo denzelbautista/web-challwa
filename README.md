@@ -16,5 +16,5 @@ $ pip install -r req.txt
 
 4) Cuarto paso, correr el servidor
 ```shell
-python main.py
+$ python main.py
 ```
