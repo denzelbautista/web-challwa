@@ -21,15 +21,12 @@ app.register_blueprint(users_bp)
 # Para la API
 
 
-@app.route('/usuarios/<string:usuario_id>', methods=['GET'])
+@app.route('/usuarios/yo', methods=['GET'])
 @authorize
-def get_usuario(usuario_id):
+def get_usuario(user_created_id):
     try:
         # Busca el usuario en la base de datos por su ID
-        usuario = Usuario.query.get(usuario_id)
-
-        if not usuario:
-            return jsonify({'success': False, 'message': 'Usuario no encontrado'}), 404
+        usuario = Usuario.query.get(user_created_id)
 
         # Serializa los datos del usuario
         usuario_serializado = usuario.serialize()

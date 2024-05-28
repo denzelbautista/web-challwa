@@ -3,15 +3,6 @@ body {
     ;
 }
 
-/*
-.section {
-    margin-top: 0px;
-}
-
-footer {
-    margin-top: 0px;
-}
-*/
 .register-form {
     display: flex;
     justify-content: center;

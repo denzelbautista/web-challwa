@@ -49,7 +49,8 @@ document.addEventListener('DOMContentLoaded', function () {
             const result = await response.json();
 
             if (response.ok) {
-                console.log(result)
+                localStorage.setItem('token', result.token);
+                window.location.href = '/';
                 //alert('User registered successfully!');
                 form.reset();
                 inputs.forEach(input => input.classList.remove('valid'));
