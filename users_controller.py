@@ -1,8 +1,9 @@
 # views.py
-from flask import Blueprint, render_template, abort, request, jsonify
+from flask import Blueprint, abort, request, jsonify, session
 from models import Usuario
 from config.local import config
 from utilities import verificar_contrasena
+from authorize import authorize
 import jwt
 import datetime
 
@@ -16,16 +17,13 @@ def create_usuario():
     returned_code = 201
     try:
         data = request.json
-        role = data.get('role')
 
         if 'email' not in data:
             list_errors.append('email requerido')
         else:
             email = data.get('email')
-            
             if Usuario.query.filter_by(email=email).first():
                 list_errors.append('email ya está registrado')
-                
 
         if 'nombre' not in data:
             list_errors.append('nombre requerido')
@@ -41,7 +39,6 @@ def create_usuario():
             list_errors.append('rol requerido')
         else:
             role = data.get('role')
-
             if role not in ('comprador', 'vendedor'):
                 list_errors.append('rol no valido')
 
@@ -55,18 +52,22 @@ def create_usuario():
         if len(list_errors) > 0:
             returned_code = 400
         else:
-
-            # Crea un nuevo usuario
             nuevo_usuario = Usuario(
                 email=email, password=password, role=role, nombre=nombre, apellido=apellido)
-            
             user_created_id = nuevo_usuario.insert()
 
             token = jwt.encode({
                 'user_created_id': user_created_id,
-                'exp': datetime.datetime.now() + datetime.timedelta(minutes=30)
+                'exp': datetime.datetime.now(tz=datetime.timezone.utc) + datetime.timedelta(minutes=30)
             }, config['SECRET_KEY'], config['ALGORYTHM'])
 
+            response = jsonify({
+                'success': True,
+                'token': token,
+                'user_created_id': user_created_id,
+            })
+            response.set_cookie('token', token)
+            return response
 
     except Exception as e:
         print('e: ', e)
@@ -80,12 +81,7 @@ def create_usuario():
         })
     elif returned_code != 201:
         abort(returned_code)
-    else:
-        return jsonify({
-            'success': True,
-            'token': token,
-            'user_created_id': user_created_id,
-        }), returned_code
+
 
 
 @users_bp.route('/login', methods=['POST'])
@@ -103,13 +99,30 @@ def login():
         if user and user.password == password:
             token = jwt.encode({
                 'user_created_id': user.id,
-                'exp': datetime.datetime.now() + datetime.timedelta(minutes=30)
+                'exp': datetime.datetime.now(tz=datetime.timezone.utc) + datetime.timedelta(minutes=30)
             }, config['SECRET_KEY'], algorithm=config['ALGORYTHM'])
 
-            return jsonify({'success': True, 'token': token}), 200
+            response = jsonify({'success': True, 'token': token})
+            response.set_cookie('token', token)
+            return response
         else:
             return jsonify({'success': False, 'message': 'Credenciales inválidas'}), 401
 
     except Exception as e:
         print('e: ', e)
         return jsonify({'success': False, 'message': 'Error en el servidor'}), 500
+
+
+
+@users_bp.route('/protected')
+@authorize
+def protected_route(user_created_id):
+    return jsonify({'message': f'Hello user {user_created_id}!'}), 200
+
+
+@users_bp.route('/logout', methods=['GET'])
+def logout():
+    response = jsonify({'success': True, 'message': 'Sesión cerrada exitosamente'})
+    response.set_cookie('token', '', expires=0)
+    session.clear()  # Limpiar también la sesión de Flask
+    return response

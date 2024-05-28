@@ -45,10 +45,11 @@ document.addEventListener('DOMContentLoaded', function () {
             const result = await response.json();
 
             if (response.ok) {
+                console.log(result)
                 localStorage.setItem('token', result.token); // Store the token in localStorage
                 // Redirect to another page or perform other actions
                 errorMessage.style.display = 'none'; // Hide the error message
-                window.location.href = "/"; // Example of redirecting to another page
+                // window.location.href = "/"; // Example of redirecting to another page
             } else {
                 errorMessage.textContent = 'Usuario o contraseña incorrectos';
                 errorMessage.style.display = 'block';
@@ -60,3 +61,33 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 });
+/*
+async function fetchProtectedData() {
+    const token = localStorage.getItem('token');
+
+    if (!token) {
+        console.error('No token found');
+        return;
+    }
+
+    try {
+        const response = await fetch('/protected', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-ACCESS-TOKEN': token
+            }
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            console.log(data);
+        } else {
+            console.error('Failed to fetch protected data');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
+*/

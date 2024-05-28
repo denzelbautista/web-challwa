@@ -51,6 +51,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (response.ok) {
                 localStorage.setItem('token', result.token);
                 window.location.href = '/';
+                console.log(result)
                 //alert('User registered successfully!');
                 form.reset();
                 inputs.forEach(input => input.classList.remove('valid'));

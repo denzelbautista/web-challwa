@@ -2,6 +2,7 @@
 from flask import Flask, request, jsonify, abort
 import sys
 from database import init_app, db
+from config.local import config
 from flask import Flask, send_file, render_template
 
 from models import Usuario, Comentario, Pedido, LineaPedido, Producto
@@ -12,6 +13,8 @@ from authorize import authorize
 
 app = Flask(__name__)
 init_app(app)
+
+app.config['SECRET_KEY'] = config['SECRET_KEY']
 
 # Para la web
 
