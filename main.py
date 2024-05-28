@@ -8,6 +8,8 @@ from models import Usuario, Comentario, Pedido, LineaPedido, Producto
 from views import views_bp
 from users_controller import users_bp
 
+from authorize import authorize
+
 app = Flask(__name__)
 init_app(app)
 
@@ -20,6 +22,7 @@ app.register_blueprint(users_bp)
 
 
 @app.route('/usuarios/<string:usuario_id>', methods=['GET'])
+@authorize
 def get_usuario(usuario_id):
     try:
         # Busca el usuario en la base de datos por su ID
@@ -36,8 +39,39 @@ def get_usuario(usuario_id):
         print(sys.exc_info())
         return jsonify({'success': False, 'message': 'Error al obtener el usuario'}), 500
 
-
 @app.route('/productos', methods=['POST'])
+@authorize
+def create_producto(user_created_id):
+    try:
+        data = request.json
+        nombre = data.get('nombre')
+        descripcion = data.get('descripcion')
+        precio = data.get('precio')
+        categoria = data.get('categoria')
+        stock = data.get('stock')
+
+        # Verifica que los campos obligatorios estén presentes
+        if not (nombre and descripcion and precio and categoria and stock):
+            return jsonify({'success': False, 'message': 'Campos obligatorios faltantes'}), 400
+
+        # Crea un nuevo producto con el user_created_id del token
+        nuevo_producto = Producto(nombre=nombre, descripcion=descripcion, precio=precio,
+                                  categoria=categoria, stock=stock, vendedor_id=user_created_id)
+        db.session.add(nuevo_producto)
+        db.session.commit()
+
+        return jsonify({'success': True, 'message': 'Producto creado correctamente', 'id': nuevo_producto.id}), 201
+    except Exception as e:
+        print(sys.exc_info())
+        db.session.rollback()
+        return jsonify({'success': False, 'message': 'Error creando producto'}), 500
+    finally:
+        db.session.close()
+
+
+"""
+@app.route('/productos', methods=['POST'])
+@authorize
 def create_producto():
     try:
         data = request.json
@@ -66,7 +100,7 @@ def create_producto():
         return jsonify({'success': False, 'message': 'Error creando producto'}), 500
     finally:
         db.session.close()
-
+"""
 
 @app.route('/productos/<producto_id>', methods=['GET'])
 def get_producto(producto_id):
