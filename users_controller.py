@@ -76,7 +76,7 @@ def create_usuario():
         return jsonify({
             'success': False,
             'errors': list_errors,
-            'message': 'Error creating a new user'
+            'message': 'Error creando un nuevo usuario'
         })
     elif returned_code != 201:
         abort(returned_code)
@@ -86,3 +86,30 @@ def create_usuario():
             'token': token,
             'user_created_id': user_created_id,
         }), returned_code
+
+
+@users_bp.route('/login', methods=['POST'])
+def login():
+    try:
+        data = request.json
+        email = data.get('email')
+        password = data.get('password')
+
+        if not email or not password:
+            return jsonify({'success': False, 'message': 'Email y contraseña son requeridos'}), 400
+
+        user = Usuario.query.filter_by(email=email).first()
+
+        if user and user.password == password:
+            token = jwt.encode({
+                'user_created_id': user.id,
+                'exp': datetime.datetime.now() + datetime.timedelta(minutes=30)
+            }, config['SECRET_KEY'], algorithm=config['ALGORYTHM'])
+
+            return jsonify({'success': True, 'token': token}), 200
+        else:
+            return jsonify({'success': False, 'message': 'Credenciales inválidas'}), 401
+
+    except Exception as e:
+        print('e: ', e)
+        return jsonify({'success': False, 'message': 'Error en el servidor'}), 500

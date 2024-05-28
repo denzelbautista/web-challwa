@@ -1,7 +1,8 @@
 document.addEventListener('DOMContentLoaded', function () {
-    const form = document.getElementById('register');
+    const form = document.getElementById('login');
     const inputs = form.querySelectorAll('input');
     const submitButton = document.getElementById('form-submit');
+    const errorMessage = document.getElementById('error-message');
 
     inputs.forEach(input => {
         input.addEventListener('input', validateInput);
@@ -21,11 +22,6 @@ document.addEventListener('DOMContentLoaded', function () {
             input.classList.remove('invalid');
             input.classList.add('valid');
         }
-
-        if (input.id === 'password' && !verificarContrasena(input.value)) {
-            input.classList.remove('valid');
-            input.classList.add('invalid');
-        }
     }
 
     form.addEventListener('submit', async function (event) {
@@ -38,7 +34,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
         try {
-            const response = await fetch('/usuarios', {
+            const response = await fetch('/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -49,37 +45,19 @@ document.addEventListener('DOMContentLoaded', function () {
             const result = await response.json();
 
             if (response.ok) {
-                console.log(result)
-                //alert('User registered successfully!');
-                form.reset();
-                inputs.forEach(input => input.classList.remove('valid'));
-                submitButton.disabled = true;
+                console.log(result);
+                localStorage.setItem('token', result.token); // Store the token in localStorage
+                // Redirect to another page or perform other actions
+                errorMessage.style.display = 'none'; // Hide the error message
+                // window.location.href = "/home"; // Example of redirecting to another page
             } else {
-                alert('Error: ' + result.message);
+                errorMessage.textContent = 'Usuario o contraseña incorrectos';
+                errorMessage.style.display = 'block';
             }
         } catch (error) {
             console.error('Error:', error);
-            alert('An error occurred. Please try again later.');
+            errorMessage.textContent = 'Ocurrió un error. Por favor, intente más tarde.';
+            errorMessage.style.display = 'block';
         }
     });
-
-    function verificarContrasena(password) {
-        // Verifica la longitud
-        if (password.length < 8) {
-            return false;
-        }
-
-        // Verifica si hay al menos una mayúscula
-        if (!/[A-Z]/.test(password)) {
-            return false;
-        }
-
-        // Verifica si hay al menos un carácter especial
-        if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
-            return false;
-        }
-
-        // La contraseña cumple con todos los requisitos
-        return true;
-    }
 });

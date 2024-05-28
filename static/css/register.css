@@ -34,6 +34,11 @@ footer {
     font-weight: bold;
 }
 
+.sign-in {
+    display: flex;
+    justify-content: center;
+    background-color: black;
+}
 .register-form input,
 .register-form select {
     width: 100%;

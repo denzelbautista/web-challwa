@@ -12,7 +12,7 @@ footer {
     margin-top: 0px;
 }
 
-.register-form {
+.login-form {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -20,7 +20,7 @@ footer {
     background-color: #f8f9fa;
 }
 
-.register-form .container {
+.login-form .container {
     max-width: 600px;
     background: white;
     padding: 30px;
@@ -28,14 +28,14 @@ footer {
     border-radius: 10px;
 }
 
-.register-form label {
+.login-form label {
     display: block;
     margin-bottom: 5px;
     font-weight: bold;
 }
 
-.register-form input,
-.register-form select {
+.login-form input,
+.login-form select {
     width: 100%;
     padding: 10px;
     margin-bottom: 15px;
@@ -44,17 +44,17 @@ footer {
     font-size: 16px;
 }
 
-.register-form input:focus,
-.register-form select:focus {
+.login-form input:focus,
+.login-form select:focus {
     border-color: #80bdff;
     outline: none;
 }
 
-.register-form input.valid {
+.login-form input.valid {
     border-color: #28a745;
 }
 
-.register-form input.invalid {
+.login-form input.invalid {
     border-color: #dc3545;
 }
 
@@ -77,4 +77,14 @@ footer {
 .main-button:disabled {
     background-color: #cccccc;
     cursor: not-allowed;
+}
+
+#error-message {
+    display: none; 
+    color: red; 
+    margin-top: 10px; 
+    border: 1px solid red; 
+    border-radius: 5px; 
+    padding: 10px;
+    background-color: #ffe6e6;
 }
