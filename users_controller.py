@@ -6,7 +6,7 @@ from utilities import verificar_contrasena
 import jwt
 import datetime
 
-# Crea un Blueprint llamado 'views'
+# Crea un Blueprint llamado 'users'
 users_bp = Blueprint('users', __name__)
 
 

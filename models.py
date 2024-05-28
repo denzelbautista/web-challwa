@@ -55,6 +55,7 @@ class Usuario(db.Model):
         self.password = password
         self.nombre = nombre
         self.apellido = apellido
+        self.role = role
     
     def insert(self):
         try:
@@ -95,7 +96,7 @@ class Producto(db.Model):
             'nombre': self.nombre,
             'descripcion': self.descripcion,
             'precio': float(self.precio),  # Convertir a float si es necesario
-            'categoria' : self.categoria.value,
+            'categoria' : self.categoria,
             'stock' : self.stock,
             'vendedor_id' : self.vendedor_id
         }

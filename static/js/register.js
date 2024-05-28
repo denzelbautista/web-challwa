@@ -49,7 +49,8 @@ document.addEventListener('DOMContentLoaded', function () {
             const result = await response.json();
 
             if (response.ok) {
-                alert('User registered successfully!');
+                console.log(result)
+                //alert('User registered successfully!');
                 form.reset();
                 inputs.forEach(input => input.classList.remove('valid'));
                 submitButton.disabled = true;
