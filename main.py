@@ -168,28 +168,5 @@ def create_linea_pedido(pedido_id):
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', debug=True)
 
-
-"""
-def fibo(n):
-    if n == 0 or n == 1:
-        return n
-    else: 
-        return fibo(n-1) + fibo(n-2)
-
-@app.route('/fibonacci/<number>',methods=['GET'])
-def get_nth_fibonacci(number):
-
-    num = int(number)
-
-    def fibo(n):
-        if n == 0 or n == 1:
-            return n
-        else: 
-            return fibo(n-1) + fibo(n-2)
-         
-    result = fibo(num)
-        
-    return jsonify({f'fibo for {num} is :':result})
-"""

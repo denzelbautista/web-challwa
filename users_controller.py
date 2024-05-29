@@ -124,7 +124,7 @@ def protected_route(user_created_id):
 @authorize
 def logout(user_created_id):
     # Limpiar la sesión del servidor (opcional)
-    session.clear()
+    # session.clear() # no utilizaré esto
 
     # Crear una respuesta JSON para enviar al cliente
     response = jsonify({'success': True, 'message': 'Sesión cerrada exitosamente'})
