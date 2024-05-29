@@ -36,3 +36,7 @@ def login():
 @views_bp.route('/productos')
 def productos():
     return render_template('productos.html')
+
+@views_bp.route('/profile/yo')
+def profile():
+    return render_template('profile.html')

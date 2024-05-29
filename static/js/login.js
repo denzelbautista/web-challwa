@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     form.addEventListener('submit', async function (event) {
         event.preventDefault();
-
+        
         const formData = new FormData(form);
         const data = {};
         formData.forEach((value, key) => {
@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 localStorage.setItem('token', result.token); // Store the token in localStorage
                 // Redirect to another page or perform other actions
                 errorMessage.style.display = 'none'; // Hide the error message
-                // window.location.href = "/"; // Example of redirecting to another page
+                window.location.href = "/"; // Example of redirecting to another page
             } else {
                 errorMessage.textContent = 'Usuario o contraseña incorrectos';
                 errorMessage.style.display = 'block';

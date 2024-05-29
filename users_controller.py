@@ -121,8 +121,15 @@ def protected_route(user_created_id):
 
 
 @users_bp.route('/logout', methods=['GET'])
-def logout():
+@authorize
+def logout(user_created_id):
+    # Limpiar la sesión del servidor (opcional)
+    session.clear()
+
+    # Crear una respuesta JSON para enviar al cliente
     response = jsonify({'success': True, 'message': 'Sesión cerrada exitosamente'})
-    response.set_cookie('token', '', expires=0)
-    session.clear()  # Limpiar también la sesión de Flask
+
+    # Eliminar la cookie del token
+    response.delete_cookie('token')
+
     return response
