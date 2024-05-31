@@ -23,22 +23,6 @@ app.register_blueprint(users_bp)
 
 # Para la API
 
-
-@app.route('/usuarios/yo', methods=['GET'])
-@authorize
-def get_usuario(user_created_id):
-    try:
-        # Busca el usuario en la base de datos por su ID
-        usuario = Usuario.query.get(user_created_id)
-
-        # Serializa los datos del usuario
-        usuario_serializado = usuario.serialize()
-
-        return jsonify({'success': True, 'usuario': usuario_serializado}), 200
-    except Exception as e:
-        print(sys.exc_info())
-        return jsonify({'success': False, 'message': 'Error al obtener el usuario'}), 500
-
 @app.route('/productos', methods=['POST'])
 @authorize
 def create_producto(user_created_id):
@@ -168,5 +152,11 @@ def create_linea_pedido(pedido_id):
 
 
 if __name__ == '__main__':
+    app.run(debug=True)
+
+"""
+if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True)
+
+"""
 

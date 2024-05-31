@@ -7,18 +7,6 @@ from datetime import datetime
 def current_time():
     return datetime.now().isoformat()
 
-"""
-# modelo de ejemplo 
-class User(db.Model):
-    id = db.Column(db.String(36), primary_key=True, default=str(uuid.uuid4()), unique=True) # para uuid
-    email = db.Column(db.String(80), unique=True, nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=False)
-
-    def __repr__(self):
-        return f'<User {self.email}>'
-
-"""
-
 class Usuario(db.Model):
     __tablename__ = 'usuarios'
 
@@ -26,13 +14,14 @@ class Usuario(db.Model):
     email = db.Column(db.String, unique=True, nullable=False)
     password = db.Column(db.String, nullable=False)
     role = db.Column(db.Enum('comprador', 'vendedor', name='user_roles'), nullable=False)
+    nombre = db.Column(db.String, nullable=False)
+    apellido = db.Column(db.String, nullable=False)
     # opcionales al momento de envio o editables en otro momento
     nombre_empresa = db.Column(db.String, nullable=True)
     telefono = db.Column(db.String, nullable=True)
     descripcion = db.Column(db.Text, nullable=True)
-    nombre = db.Column(db.String, nullable=True)
-    apellido = db.Column(db.String, nullable=True)
     direccion_envio = db.Column(db.String, nullable=True)
+    imagen_usuario = db.Column(db.String(500), nullable=True)
     # fechas
     created_at = db.Column(db.String, default=current_time)
     updated_at = db.Column(db.String, default=current_time, onupdate=current_time)
@@ -47,7 +36,8 @@ class Usuario(db.Model):
             'nombre': self.nombre,
             'apellido' : self.apellido,
             'email': self.email,
-            'role' : self.role
+            'role' : self.role,
+            'imagen_usuario' : self.imagen_usuario
         }
     
     def __init__(self, email, password, nombre, apellido, role):
@@ -82,6 +72,7 @@ class Producto(db.Model):
     categoria = db.Column(db.Enum('pescado', 'marisco', 'accesorios_nauticos', 'equipos_de_pesca', 'ropa_accesorios', name='product_categories'), nullable=False)
     stock = db.Column(db.Integer, nullable=False)
     vendedor_id = db.Column(db.Integer, db.ForeignKey('usuarios.id'), nullable=False)
+    imagen_producto = db.Column(db.String(500), nullable=False)
     # fechas
     created_at = db.Column(db.String, default=current_time)
     updated_at = db.Column(db.String, default=current_time, onupdate=current_time)
@@ -98,7 +89,8 @@ class Producto(db.Model):
             'precio': float(self.precio),  # Convertir a float si es necesario
             'categoria' : self.categoria,
             'stock' : self.stock,
-            'vendedor_id' : self.vendedor_id
+            'vendedor_id' : self.vendedor_id,
+            'imagen_producto' : self.imagen_producto
         }
 
 class Pedido(db.Model):

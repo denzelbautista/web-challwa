@@ -32,11 +32,10 @@ def register():
 def login():
     return render_template('login.html')
 
-
 @views_bp.route('/productos')
 def productos():
     return render_template('productos.html')
 
-@views_bp.route('/profile/yo')
+@views_bp.route('/profile')
 def profile():
     return render_template('profile.html')

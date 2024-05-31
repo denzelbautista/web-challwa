@@ -10,6 +10,7 @@ import datetime
 # Crea un Blueprint llamado 'users'
 users_bp = Blueprint('users', __name__)
 
+# crear usuario
 
 @users_bp.route('/usuarios', methods=['POST'])
 def create_usuario():
@@ -64,7 +65,7 @@ def create_usuario():
             response = jsonify({
                 'success': True,
                 'token': token,
-                'user_created_id': user_created_id,
+                'user_created_id': user_created_id
             })
             response.set_cookie('token', token)
             return response
@@ -82,7 +83,48 @@ def create_usuario():
     elif returned_code != 201:
         abort(returned_code)
 
+@users_bp.route('/usuarios/<user_id>', methods=['GET'])
+@authorize
+def get_current_user(user_created_id, user_id):
+    # Verificar si el usuario solicitado es el mismo que el usuario autenticado
+    if user_created_id != user_id:
+        return jsonify({'error': 'No autorizado para ver este perfil'}), 403
 
+    # Obtener los datos del usuario desde la base de datos
+    usuario = Usuario.query.get(user_id)
+    if not usuario:
+        return jsonify({'error': 'Usuario no encontrado'}), 404
+
+    # Retornar los datos del usuario en formato JSON
+    return jsonify({'success':True, 'usuario' : usuario.serialize()})
+
+# Endpoint para actualizar los datos del usuario
+@users_bp.route('/usuarios/<user_id>', methods=['PATCH'])
+@authorize
+def update_user(user_created_id, user_id):
+    # Verificar si el usuario solicitado es el mismo que el usuario autenticado
+    if user_created_id != user_id:
+        return jsonify({'error': 'No autorizado para editar este perfil'}), 403
+
+    # Obtener los datos actualizados del usuario desde la solicitud
+    data = request.json
+
+    # Actualizar los atributos del usuario
+    usuario = Usuario.query.get(user_id)
+    if not usuario:
+        return jsonify({'error': 'Usuario no encontrado'}), 404
+
+    # Actualizar los datos del usuario con los valores proporcionados
+    for key, value in data.items():
+        setattr(usuario, key, value)
+
+    # Guardar los cambios en la base de datos
+    usuario.insert()
+
+    # Retornar una respuesta de éxito
+    return jsonify({'message': 'Perfil de usuario actualizado exitosamente'})
+
+# inicio de sesion de usuario
 
 @users_bp.route('/login', methods=['POST'])
 def login():
@@ -112,13 +154,7 @@ def login():
         print('e: ', e)
         return jsonify({'success': False, 'message': 'Error en el servidor'}), 500
 
-
-
-@users_bp.route('/protected')
-@authorize
-def protected_route(user_created_id):
-    return jsonify({'message': f'Hello user {user_created_id}!'}), 200
-
+# cierre de sesion de usuario
 
 @users_bp.route('/logout', methods=['GET'])
 @authorize
@@ -133,3 +169,10 @@ def logout(user_created_id):
     response.delete_cookie('token')
 
     return response
+
+# prueba de @authorize
+
+@users_bp.route('/protected')
+@authorize
+def protected_route(user_created_id):
+    return jsonify({'message': f'Hello user {user_created_id}!'}), 200

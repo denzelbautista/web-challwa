@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // Obtener el elemento del menú de navegación
     const navMenu = document.querySelector('.main-nav ul.nav');
 
@@ -10,29 +10,29 @@ document.addEventListener('DOMContentLoaded', function() {
         // Crear nuevos enlaces basados en el estado de autenticación
         if (isAuthenticated) {
             navMenu.innerHTML += `
-                <li><a href="/" class="active">Inicio</a></li>
-                <li><a href="/shop">Tienda</a></li>
-                <li><a href="/sell">Vende ahora</a></li>
-                <li><a href="/contact">Contacto</a></li>
-                <li><a href="/profile">Mi Perfil</a></li>
+                <li><a href="/views/index" class="active">Inicio</a></li>
+                <li><a href="/views/shop">Tienda</a></li>
+                <li><a href="/views/sell">Vende ahora</a></li>
+                <li><a href="/views/contact">Contacto</a></li>
+                <li><a href="/views/profile">Mi Perfil</a></li>
                 <li><a href="#" id="logout-link">Cerrar sesión</a></li>
             `;
         } else {
             navMenu.innerHTML += `
-                <li><a href="/" class="active">Inicio</a></li>
-                <li><a href="/shop">Tienda</a></li>
-                <li><a href="/sell">Vende ahora</a></li>
-                <li><a href="/contact">Contacto</a></li>
-                <li><a href="/register">Registrate</a></li>
-                <li><a href="/login">Inicia sesion</a></li>
+                <li><a href="/views/index" class="active">Inicio</a></li>
+                <li><a href="/views/shop">Tienda</a></li>
+                <li><a href="/views/sell">Vende ahora</a></li>
+                <li><a href="/views/contact">Contacto</a></li>
+                <li><a href="/views/register">Regístrate</a></li>
+                <li><a href="/views/login">Inicia sesión</a></li>
             `;
         }
 
-        // Agregar evento click al enlace de cerrar sesión si el usuario está autenticado
-        if (isAuthenticated) {
-            document.querySelector('#logout-link').addEventListener('click', async function(event) {
+        // Añadir el evento click al enlace de cerrar sesión
+        const logoutLink = document.querySelector('#logout-link');
+        if (logoutLink) {
+            logoutLink.addEventListener('click', async function (event) {
                 event.preventDefault(); // Prevenir el comportamiento predeterminado del enlace
-
                 const token = localStorage.getItem('token');
                 if (!token) {
                     console.error('No se encontró token');
