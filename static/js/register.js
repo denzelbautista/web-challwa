@@ -49,7 +49,6 @@ document.addEventListener('DOMContentLoaded', function () {
             const result = await response.json();
 
             if (response.ok) {
-                localStorage.setItem('token', result.token);
                 window.location.href = '/';
                 console.log(result)
                 //alert('User registered successfully!');

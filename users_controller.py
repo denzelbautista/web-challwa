@@ -1,5 +1,5 @@
-# views.py
-from flask import Blueprint, abort, request, jsonify, session
+# users_controller.py
+from flask import Blueprint, abort, request, jsonify, session, render_template
 from models import Usuario
 from config.local import config
 from utilities import verificar_contrasena
@@ -7,11 +7,13 @@ from authorize import authorize
 import jwt
 import datetime
 
+from flask_login import login_user, logout_user, login_required, current_user
+from werkzeug.security import generate_password_hash, check_password_hash
+
 # Crea un Blueprint llamado 'users'
 users_bp = Blueprint('users', __name__)
 
-# crear usuario
-
+# Crear usuario
 @users_bp.route('/usuarios', methods=['POST'])
 def create_usuario():
     list_errors = []
@@ -47,28 +49,23 @@ def create_usuario():
             list_errors.append('contraseña requerida')
         else:
             password = data.get('password')
-            if not verificar_contrasena(password):
-                list_errors.append('contraseña no cumple con los requisitos')
+            password_hashed = generate_password_hash(password)
 
         if len(list_errors) > 0:
             returned_code = 400
         else:
             nuevo_usuario = Usuario(
-                email=email, password=password, role=role, nombre=nombre, apellido=apellido)
+                email=email, password=password_hashed, role=role, nombre=nombre, apellido=apellido)
             user_created_id = nuevo_usuario.insert()
-
-            token = jwt.encode({
-                'user_created_id': user_created_id,
-                'exp': datetime.datetime.now(tz=datetime.timezone.utc) + datetime.timedelta(minutes=30)
-            }, config['SECRET_KEY'], config['ALGORYTHM'])
 
             response = jsonify({
                 'success': True,
-                'token': token,
                 'user_created_id': user_created_id
             })
-            response.set_cookie('token', token)
-            return response
+
+            login_user(nuevo_usuario)  # Loguear usuario automáticamente tras el registro
+
+            return response, 201
 
     except Exception as e:
         print('e: ', e)
@@ -79,53 +76,11 @@ def create_usuario():
             'success': False,
             'errors': list_errors,
             'message': 'Error creando un nuevo usuario'
-        })
+        }), 400
     elif returned_code != 201:
         abort(returned_code)
 
-@users_bp.route('/usuarios/<user_id>', methods=['GET'])
-@authorize
-def get_current_user(user_created_id, user_id):
-    # Verificar si el usuario solicitado es el mismo que el usuario autenticado
-    if user_created_id != user_id:
-        return jsonify({'error': 'No autorizado para ver este perfil'}), 403
-
-    # Obtener los datos del usuario desde la base de datos
-    usuario = Usuario.query.get(user_id)
-    if not usuario:
-        return jsonify({'error': 'Usuario no encontrado'}), 404
-
-    # Retornar los datos del usuario en formato JSON
-    return jsonify({'success':True, 'usuario' : usuario.serialize()})
-
-# Endpoint para actualizar los datos del usuario
-@users_bp.route('/usuarios/<user_id>', methods=['PATCH'])
-@authorize
-def update_user(user_created_id, user_id):
-    # Verificar si el usuario solicitado es el mismo que el usuario autenticado
-    if user_created_id != user_id:
-        return jsonify({'error': 'No autorizado para editar este perfil'}), 403
-
-    # Obtener los datos actualizados del usuario desde la solicitud
-    data = request.json
-
-    # Actualizar los atributos del usuario
-    usuario = Usuario.query.get(user_id)
-    if not usuario:
-        return jsonify({'error': 'Usuario no encontrado'}), 404
-
-    # Actualizar los datos del usuario con los valores proporcionados
-    for key, value in data.items():
-        setattr(usuario, key, value)
-
-    # Guardar los cambios en la base de datos
-    usuario.insert()
-
-    # Retornar una respuesta de éxito
-    return jsonify({'message': 'Perfil de usuario actualizado exitosamente'})
-
-# inicio de sesion de usuario
-
+# Iniciar sesión
 @users_bp.route('/login', methods=['POST'])
 def login():
     try:
@@ -138,15 +93,9 @@ def login():
 
         user = Usuario.query.filter_by(email=email).first()
 
-        if user and user.password == password:
-            token = jwt.encode({
-                'user_created_id': user.id,
-                'exp': datetime.datetime.now(tz=datetime.timezone.utc) + datetime.timedelta(minutes=30)
-            }, config['SECRET_KEY'], algorithm=config['ALGORYTHM'])
-
-            response = jsonify({'success': True, 'token': token})
-            response.set_cookie('token', token)
-            return response
+        if user and check_password_hash(user.password, password):
+            login_user(user)
+            return jsonify({'success': True}), 200
         else:
             return jsonify({'success': False, 'message': 'Credenciales inválidas'}), 401
 
@@ -154,25 +103,53 @@ def login():
         print('e: ', e)
         return jsonify({'success': False, 'message': 'Error en el servidor'}), 500
 
-# cierre de sesion de usuario
-
+# Cerrar sesión
 @users_bp.route('/logout', methods=['GET'])
-@authorize
-def logout(user_created_id):
-    # Limpiar la sesión del servidor (opcional)
-    # session.clear() # no utilizaré esto
+@login_required
+def logout():
+    logout_user()
+    return jsonify({'success': True, 'message': 'Sesión cerrada exitosamente'}), 200
 
-    # Crear una respuesta JSON para enviar al cliente
-    response = jsonify({'success': True, 'message': 'Sesión cerrada exitosamente'})
+# Obtener el perfil del usuario actual
+@users_bp.route('/usuarios', methods=['GET'])
+@login_required
+def get_current_user():
+    usuario = current_user
+ 
+    if not usuario:
+        return jsonify({'error': 'Usuario no encontrado'}), 404
 
-    # Eliminar la cookie del token
-    response.delete_cookie('token')
+    return jsonify({'success': True, 'usuario': usuario.serialize()}), 200
 
-    return response
+# Actualizar el perfil del usuario
+@users_bp.route('/usuarios', methods=['PATCH'])
+@login_required
+def update_user():
+    usuario = current_user
+    if not usuario:
+        return jsonify({'error': 'Usuario no autorizado para editar este perfil'}), 403
 
-# prueba de @authorize
+    data = request.json
+    for key, value in data.items():
+        # Verificar si el campo es editable (evitar modificar nombre y apellido)
+        if key != 'nombre' and key != 'apellido':
+            setattr(usuario, key, value)
 
+    usuario_update_id = usuario.insert()  # Guardar los cambios en la base de datos
+
+    return jsonify({'message': 'Perfil de usuario actualizado exitosamente', 'id': usuario_update_id}), 200
+
+
+# Ruta protegida de ejemplo
 @users_bp.route('/protected')
-@authorize
-def protected_route(user_created_id):
-    return jsonify({'message': f'Hello user {user_created_id}!'}), 200
+@login_required
+def protected_route():
+    return jsonify({'message': f'Hello user {current_user.id}!'}), 200
+
+
+# vistas
+
+@users_bp.route('/profile')
+@login_required
+def profile():
+    return render_template('profile.html')

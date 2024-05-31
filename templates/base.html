@@ -51,8 +51,14 @@
                             <li><a href="{{ url_for('views.shop') }}">Tienda</a></li>
                             <li><a href="{{ url_for('views.sell') }}">Vende ahora</a></li>
                             <li><a href="{{ url_for('views.contact') }}">Contacto</a></li>
-                            <li><a href="{{ url_for('views.register') }}">Registrate</a></li>
-                            <li><a href="{{ url_for('views.login')   }}">Inicia sesion</a></li>
+                            {% if current_user.is_authenticated %}
+                            <li><a href="{{ url_for('users.profile') }}">Mi Perfil</a></li>
+                            <li><a href="#" id="logout-button">Cerrar sesión</a></li>
+                            <!-- Agrega un ID al botón de cerrar sesión -->
+                            {% else %}
+                            <li><a href="{{ url_for('views.register') }}">Regístrate</a></li>
+                            <li><a href="{{ url_for('views.login') }}">Inicia sesión</a></li>
+                            {% endif %}
                         </ul>
                         <a class='menu-trigger'>
                             <span>Menu</span>
@@ -88,7 +94,6 @@
     <script src="{{ url_for('static', filename='assets/js/custom.js') }}"></script>
     <!-- scripts propios -->
     <script src="{{ url_for('static', filename='js/basehtml.js')}}"></script>
-
 </body>
 
 </html>

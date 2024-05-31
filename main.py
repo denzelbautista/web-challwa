@@ -4,7 +4,9 @@ import sys
 from database import init_app, db
 from config.local import config
 from flask import Flask, send_file, render_template
-
+# flask-login
+from flask_login import LoginManager, login_user, logout_user, login_required, current_user
+# end flask-login
 from models import Usuario, Comentario, Pedido, LineaPedido, Producto
 from views import views_bp
 from users_controller import users_bp
@@ -15,6 +17,15 @@ app = Flask(__name__)
 init_app(app)
 
 app.config['SECRET_KEY'] = config['SECRET_KEY']
+
+# Configuración de Flask-Login
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'users.login'
+
+@login_manager.user_loader
+def load_user(user_id):
+    return Usuario.query.get(user_id)
 
 # Para la web
 

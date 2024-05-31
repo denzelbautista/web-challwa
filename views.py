@@ -1,6 +1,6 @@
 # views.py
 from flask import Blueprint, render_template
-
+from flask_login import login_user, logout_user, login_required, current_user
 # Crea un Blueprint llamado 'views'
 views_bp = Blueprint('views', __name__)
 
@@ -36,6 +36,3 @@ def login():
 def productos():
     return render_template('productos.html')
 
-@views_bp.route('/profile')
-def profile():
-    return render_template('profile.html')

@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     form.addEventListener('submit', async function (event) {
         event.preventDefault();
-        
+
         const formData = new FormData(form);
         const data = {};
         formData.forEach((value, key) => {
@@ -45,21 +45,23 @@ document.addEventListener('DOMContentLoaded', function () {
             const result = await response.json();
 
             if (response.ok) {
-                console.log(result)
-                localStorage.setItem('token', result.token); // Store the token in localStorage
-                // Redirect to another page or perform other actions
-                errorMessage.style.display = 'none'; // Hide the error message
-                window.location.href = "/"; // Example of redirecting to another page
+                console.log(result);
+                // No se necesita almacenar el token en localStorage
+                errorMessage.style.display = 'none'; // Ocultar el mensaje de error
+                // Redirigir a la página principal u otra página
+                window.location.href = "/"; // Ejemplo de redirección a otra página
             } else {
                 errorMessage.textContent = 'Usuario o contraseña incorrectos';
                 errorMessage.style.display = 'block';
+                console.log(data)
             }
         } catch (error) {
             console.error('Error:', error);
-            errorMessage.textContent = 'Ocurrió un error. Por favor, intente más tarde.';
+            errorMessage.textContent = 'Ocurrió un error. Por favor, inténtelo más tarde.';
             errorMessage.style.display = 'block';
         }
     });
+
 });
 /*
 async function fetchProtectedData() {

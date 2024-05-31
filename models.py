@@ -3,14 +3,15 @@ from database import db
 import uuid
 import sys
 from datetime import datetime
+from flask_login import UserMixin
 
 def current_time():
     return datetime.now().isoformat()
 
-class Usuario(db.Model):
+class Usuario(UserMixin, db.Model):
     __tablename__ = 'usuarios'
 
-    id = db.Column(db.String(36), primary_key=True, default=lambda:str(uuid.uuid4()), unique=True)
+    id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()), unique=True)
     email = db.Column(db.String, unique=True, nullable=False)
     password = db.Column(db.String, nullable=False)
     role = db.Column(db.Enum('comprador', 'vendedor', name='user_roles'), nullable=False)
@@ -34,19 +35,23 @@ class Usuario(db.Model):
         return {
             'id': self.id,
             'nombre': self.nombre,
-            'apellido' : self.apellido,
+            'apellido': self.apellido,
             'email': self.email,
-            'role' : self.role,
-            'imagen_usuario' : self.imagen_usuario
+            'role': self.role,
+            'imagen_usuario': self.imagen_usuario,
+            'telefono' : self.telefono,
+            'descripcion' : self.descripcion ,
+            'direccion_envio' :  self.direccion_envio,
+            'nombre_empresa' : self.nombre_empresa
         }
-    
+
     def __init__(self, email, password, nombre, apellido, role):
         self.email = email
         self.password = password
         self.nombre = nombre
         self.apellido = apellido
         self.role = role
-    
+
     def insert(self):
         try:
             db.session.add(self)
@@ -58,7 +63,6 @@ class Usuario(db.Model):
             db.session.rollback()
         finally:
             db.session.close()
-        
         return user_created_id
     
 

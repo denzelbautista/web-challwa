@@ -1,3 +1,23 @@
-.perfil_container {
-    background-color: aqua;
+/* Estilo para los campos de solo lectura */
+input[readonly],
+textarea[readonly] {
+    background-color: #f2f2f2;
+    /* Color de fondo gris claro */
+    color: #333;
+    /* Color de texto oscuro */
+}
+
+/* Estilo para los campos editables */
+input:not([readonly]),
+textarea:not([readonly]) {
+    background-color: #fff;
+    /* Color de fondo blanco */
+    color: #333;
+    /* Color de texto oscuro */
+}
+
+/* Estilo para el botón de Editar/Guardar Perfil */
+#edit-profile-btn {
+    margin-top: 20px;
+    /* Margen superior adicional */
 }
