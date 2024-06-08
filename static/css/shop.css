@@ -1,0 +1,78 @@
+.trending-items {
+    margin-bottom: 30px;
+}
+
+.trending-items .item {
+    border: 1px solid #ddd;
+    padding: 15px;
+    border-radius: 8px;
+    transition: box-shadow 0.3s;
+}
+
+.trending-items .item:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.trending-items .thumb {
+    position: relative;
+}
+
+.trending-items .thumb img {
+    width: 100%;
+    border-radius: 8px;
+}
+
+.trending-items .price {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 4px;
+}
+
+.trending-items .down-content {
+    margin-top: 15px;
+}
+
+.trending-items .category {
+    display: block;
+    font-size: 14px;
+    color: #777;
+    margin-bottom: 5px;
+}
+
+.trending-items h4 {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.trending-items a {
+    color: #007bff;
+    transition: color 0.3s;
+}
+
+.trending-items a:hover {
+    color: #0056b3;
+}
+
+.trending-filter {
+    margin-bottom: 20px;
+}
+
+.trending-filter li {
+    display: inline-block;
+    margin-right: 10px;
+}
+
+.trending-filter a {
+    text-decoration: none;
+    color: #007bff;
+    transition: color 0.3s;
+}
+
+.trending-filter a.is_active,
+.trending-filter a:hover {
+    color: #0056b3;
+}

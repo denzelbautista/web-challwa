@@ -49,13 +49,15 @@
                         <ul class="nav">
                             <li><a href="{{ url_for('views.index') }}" class="active">Inicio</a></li>
                             <li><a href="{{ url_for('views.shop') }}">Tienda</a></li>
-                            <li><a href="{{ url_for('views.sell') }}">Vende ahora</a></li>
-                            <li><a href="{{ url_for('views.contact') }}">Contacto</a></li>
+                            <li><a href="{{ url_for('views.sell') }}">Falta completar</a></li>
+                            
                             {% if current_user.is_authenticated %}
+                            <li><a href="{{ url_for('views.registroproducto') }}">Añadir Producto</a></li>
                             <li><a href="{{ url_for('users.profile') }}">Mi Perfil</a></li>
                             <li><a href="#" id="logout-button">Cerrar sesión</a></li>
                             <!-- Agrega un ID al botón de cerrar sesión -->
                             {% else %}
+                            <li><a href="{{ url_for('views.contact') }}">Contacto</a></li>
                             <li><a href="{{ url_for('views.register') }}">Regístrate</a></li>
                             <li><a href="{{ url_for('views.login') }}">Inicia sesión</a></li>
                             {% endif %}

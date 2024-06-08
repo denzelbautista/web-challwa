@@ -32,7 +32,12 @@ def register():
 def login():
     return render_template('login.html')
 
-@views_bp.route('/productos')
-def productos():
-    return render_template('productos.html')
+@views_bp.route('/detallesproducto')
+def detallesproducto():
+    return render_template('detallesproducto.html')
+
+@views_bp.route('/registroproducto')
+@login_required
+def registroproducto():
+    return render_template('registroproducto.html')
 
