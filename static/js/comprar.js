@@ -1,7 +1,7 @@
 // comprar.js
 document.addEventListener('DOMContentLoaded', function () {
     const carrito = JSON.parse(localStorage.getItem('cart')) || [];
-    const numeroTelefono = "999000111"; // Tu número de teléfono
+    const numeroTelefono = "922143197"; // Tu número de teléfono
 
     // Carrito productos
     const productosCarrito = document.getElementById('productos-carrito');
@@ -57,7 +57,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 return;
             }
         }
-
+        /*
         // Register purchase
         const compraResponse = await fetch('/compras', {
             method: 'POST',
@@ -70,13 +70,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 monto: total
             })
         });
-
+        
         const compraResult = await compraResponse.json();
         if (!compraResult.success) {
             alert(`Error registrando la compra: ${compraResult.message}`);
             return;
         }
-
+        */
         // Prepare WhatsApp message
         const productosTexto = carrito.map(p => `${p.nombre} - Cantidad: ${p.cantidad} - Teléfono del vendedor: ${p.telefonoVendedor}`).join('%0A');
         const mensaje = `Resumen de compra:%0ANombre: ${compradorNombre}%0AApellido: ${compradorApellido}%0ADirección de envío: ${compradorDireccion}%0ADNI: ${compradorDni}%0AProductos:%0A${productosTexto}%0ASubtotal: S/. ${total.toFixed(2)}`;
