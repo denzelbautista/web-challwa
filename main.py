@@ -106,26 +106,26 @@ def get_productos():
         print(sys.exc_info())
         return jsonify({'success': False, 'message': 'Error obteniendo productos'}), 500
 
-
-
-@app.route('/productos/<producto_id>', methods=['GET'])
-def get_producto(producto_id):
+@app.route('/productos/<id>', methods=['GET'])
+def get_producto(id):
     try:
-        # Verifica que el ID sea positivo
-        if producto_id <= 0:
-            return jsonify({'success': False, 'message': 'ID de producto no válido'}), 400
-
-        # Busca el producto por ID
-        producto = Producto.query.get(producto_id)
-        if not producto:
+        producto = Producto.query.get(id)
+        if producto:
+            producto_data = {
+                'id': producto.id,
+                'nombre': producto.nombre,
+                'descripcion': producto.descripcion,
+                'precio': producto.precio,
+                'categoria': producto.categoria,
+                'stock': producto.stock,
+                'imagen_producto': producto.imagen_producto
+            }
+            return jsonify({'success': True, 'producto': producto_data}), 200
+        else:
             return jsonify({'success': False, 'message': 'Producto no encontrado'}), 404
-
-        # Devuelve los detalles del producto
-        return jsonify({'success': True, 'producto': producto.serialize()}), 200
     except Exception as e:
         print(sys.exc_info())
-        return jsonify({'success': False, 'message': 'Error al obtener el producto'}), 500
-
+        return jsonify({'success': False, 'message': 'Error obteniendo producto'}), 500
 
 @app.route('/pedidos', methods=['POST'])
 def create_pedido():

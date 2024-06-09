@@ -1,5 +1,5 @@
 # views.py
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, request
 from flask_login import login_user, logout_user, login_required, current_user
 # Crea un Blueprint llamado 'views'
 views_bp = Blueprint('views', __name__)
@@ -20,9 +20,9 @@ def contact():
 def sell():
     return render_template('sell.html')
 
-@views_bp.route('/fishes')
-def fishes():
-    return render_template('fishes.html')
+@views_bp.route('/carrito')
+def carrito():
+    return render_template('carrito.html')
 
 @views_bp.route('/register')
 def register():
@@ -34,7 +34,8 @@ def login():
 
 @views_bp.route('/detallesproducto')
 def detallesproducto():
-    return render_template('detallesproducto.html')
+    product_id = request.args.get('id')
+    return render_template('detallesproducto.html', product_id=product_id)
 
 @views_bp.route('/registroproducto')
 @login_required

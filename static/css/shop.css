@@ -1,78 +1,112 @@
-.trending-items {
-    margin-bottom: 30px;
+.containerproductos {
+    /* quiero que izquierda derecha y abajo tengan 20 y arriba tenga 25*/
+    padding: 30px 20px 20px 20px;
 }
 
-.trending-items .item {
+.row {
+    justify-content: space-between;
+    display: flex;
+}
+
+.product-card {
     border: 1px solid #ddd;
-    padding: 15px;
-    border-radius: 8px;
-    transition: box-shadow 0.3s;
-}
+    border-radius: 20px;
+    padding: 20px;
+    text-align: center;
+    
+    margin-bottom: 10px;
 
-.trending-items .item:hover {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease;
+    background-color: #f8f9fa;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
 }
-
-.trending-items .thumb {
-    position: relative;
+.product-card:hover {
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
 }
-
-.trending-items .thumb img {
+.product-image {
     width: 100%;
-    border-radius: 8px;
+    height: 150px;
+    object-fit: contain;
+    background-color: #000;
+    border-radius: 10px;
 }
-
-.trending-items .price {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background-color: rgba(0, 0, 0, 0.7);
-    color: #fff;
-    padding: 5px 10px;
-    border-radius: 4px;
-}
-
-.trending-items .down-content {
-    margin-top: 15px;
-}
-
-.trending-items .category {
-    display: block;
+.product-category {
     font-size: 14px;
-    color: #777;
-    margin-bottom: 5px;
+    color: #888;
 }
-
-.trending-items h4 {
+.product-name {
     font-size: 18px;
+    font-weight: bold;
+    margin: 10px 0;
+}
+.product-price {
+    font-size: 16px;
+    color: #e74c3c;
     margin-bottom: 10px;
 }
-
-.trending-items a {
-    color: #007bff;
-    transition: color 0.3s;
-}
-
-.trending-items a:hover {
-    color: #0056b3;
-}
-
-.trending-filter {
-    margin-bottom: 20px;
-}
-
-.trending-filter li {
+.buy-button {
+    margin-left: 15px;
     display: inline-block;
-    margin-right: 10px;
-}
-
-.trending-filter a {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 15px;
+    cursor: pointer;
     text-decoration: none;
-    color: #007bff;
-    transition: color 0.3s;
+}
+.buy-button:hover {
+    background-color: #0056b3;
+}
+.pagination {
+    display: flex;
+    justify-content: center;
+    list-style: none;
+    padding: 0;
+}
+.pagination li {
+    margin: 0 5px;
+}
+.pagination a {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 15px;
+    text-decoration: none;
+}
+.pagination a:hover {
+    background-color: #f1f1f1;
+}
+.is_active {
+    background-color: #007bff;
+    color: #fff;
+    border-color: #007bff;
+}
+@media (max-width: 768px) {
+    .product-card {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+}
+@media (min-width: 769px) and (max-width: 992px) {
+    .product-card {
+        flex: 0 0 48%;
+        max-width: 48%;
+    }
+}
+@media (min-width: 993px) {
+    .product-card {
+        flex: 0 0 23%;
+        max-width: 23%;
+    }
 }
 
-.trending-filter a.is_active,
-.trending-filter a:hover {
-    color: #0056b3;
+.pagination {
+    margin-top: 20px;
+}
+
+footer {
+    margin-top: 10px;
 }

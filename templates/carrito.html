@@ -1,0 +1,36 @@
+<!-- index.html -->
+{% extends "base.html" %}
+
+{% block content %}
+
+<head>
+  <!-- css propios -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/carrito.css') }}">
+</head>
+    
+<div class="page-heading header-text">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <h3>Tu carrito</h3>
+        <span class="breadcrumb"><a href="#">Home</a>  >  Mi carrito</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="carrrito">
+  <div class="cart-container">
+    <div id="cart-items"></div>
+    <button id="checkout-button">Checkout</button>
+  </div>
+</div>
+
+
+<!-- scripts propios-->
+<script src="{{ url_for('static', filename='js/carrito.js') }}"></script>
+
+
+
+{% endblock %}
