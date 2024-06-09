@@ -22,10 +22,6 @@ document.addEventListener('DOMContentLoaded', function () {
             input.classList.add('valid');
         }
 
-        if (input.id === 'password' && !verificarContrasena(input.value)) {
-            input.classList.remove('valid');
-            input.classList.add('invalid');
-        }
     }
 
     form.addEventListener('submit', async function (event) {
@@ -63,7 +59,7 @@ document.addEventListener('DOMContentLoaded', function () {
             alert('An error occurred. Please try again later.');
         }
     });
-
+    /*
     function verificarContrasena(password) {
         // Verifica la longitud
         if (password.length < 8) {
@@ -83,4 +79,5 @@ document.addEventListener('DOMContentLoaded', function () {
         // La contraseña cumple con todos los requisitos
         return true;
     }
+    */
 });

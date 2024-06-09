@@ -41,3 +41,7 @@ def detallesproducto():
 def registroproducto():
     return render_template('registroproducto.html')
 
+@views_bp.route('/profile')
+@login_required
+def profile():
+    return render_template('profile.html')

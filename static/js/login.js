@@ -63,33 +63,3 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
 });
-/*
-async function fetchProtectedData() {
-    const token = localStorage.getItem('token');
-
-    if (!token) {
-        console.error('No token found');
-        return;
-    }
-
-    try {
-        const response = await fetch('/protected', {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-ACCESS-TOKEN': token
-            }
-        });
-
-        if (response.ok) {
-            const data = await response.json();
-            console.log(data);
-        } else {
-            console.error('Failed to fetch protected data');
-        }
-    } catch (error) {
-        console.error('Error:', error);
-    }
-}
-
-*/

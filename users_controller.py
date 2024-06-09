@@ -1,10 +1,9 @@
 # users_controller.py
-from flask import Blueprint, abort, request, jsonify, session, render_template
+from flask import Blueprint, abort, request, jsonify, render_template
 from models import Usuario
 from config.local import config
 from utilities import verificar_contrasena
 from authorize import authorize
-import jwt
 import datetime
 
 from flask_login import login_user, logout_user, login_required, current_user
@@ -129,11 +128,9 @@ def update_user():
     if not usuario:
         return jsonify({'error': 'Usuario no autorizado para editar este perfil'}), 403
 
-    data = request.json
-    for key, value in data.items():
-        # Verificar si el campo es editable (evitar modificar nombre y apellido)
-        if key != 'nombre' and key != 'apellido':
-            setattr(usuario, key, value)
+    nombre_empresa = request.form.get('nombre_empresa')
+    nombre_empresa = request.form.get('telefono')
+    nombre_empresa = request.form.get('nombre_empresa')
 
     usuario_update_id = usuario.insert()  # Guardar los cambios en la base de datos
 
@@ -147,9 +144,24 @@ def protected_route():
     return jsonify({'message': f'Hello user {current_user.id}!'}), 200
 
 
-# vistas
 
-@users_bp.route('/profile')
+"""
+@users_bp.route('/usuarios', methods=['PATCH'])
 @login_required
-def profile():
-    return render_template('profile.html')
+def update_user():
+    usuario = current_user
+    if not usuario:
+        return jsonify({'error': 'Usuario no autorizado para editar este perfil'}), 403
+
+    data = request.json
+    for key, value in data.items():
+        # Verificar si el campo es editable (evitar modificar nombre y apellido)
+        if key != 'nombre' and key != 'apellido':
+            setattr(usuario, key, value)
+
+    usuario_update_id = usuario.insert()  # Guardar los cambios en la base de datos
+
+    return jsonify({'message': 'Perfil de usuario actualizado exitosamente', 'id': usuario_update_id}), 200
+
+
+"""

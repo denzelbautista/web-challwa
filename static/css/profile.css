@@ -21,3 +21,7 @@ textarea:not([readonly]) {
     margin-top: 20px;
     /* Margen superior adicional */
 }
+.botons{
+    display: grid;
+
+}
