@@ -16,9 +16,9 @@ def shop():
 def contact():
     return render_template('contact.html')
 
-@views_bp.route('/sell')
+@views_bp.route('/comprar')
 def sell():
-    return render_template('sell.html')
+    return render_template('comprar.html')
 
 @views_bp.route('/carrito')
 def carrito():

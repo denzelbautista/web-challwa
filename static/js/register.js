@@ -2,6 +2,20 @@ document.addEventListener('DOMContentLoaded', function () {
     const form = document.getElementById('register');
     const inputs = form.querySelectorAll('input');
     const submitButton = document.getElementById('form-submit');
+    const roleSelect = document.getElementById('role');
+    const phoneContainer = document.getElementById('phone-container');
+    const phoneInput = document.getElementById('telefono');
+
+    roleSelect.addEventListener('change', function () {
+        if (roleSelect.value === 'vendedor') {
+            phoneContainer.style.display = 'block';
+            phoneInput.required = true;
+        } else {
+            phoneContainer.style.display = 'none';
+            phoneInput.required = false;
+            phoneInput.value = ''; // Clear the phone input value if hidden
+        }
+    });
 
     inputs.forEach(input => {
         input.addEventListener('input', validateInput);
@@ -21,7 +35,6 @@ document.addEventListener('DOMContentLoaded', function () {
             input.classList.remove('invalid');
             input.classList.add('valid');
         }
-
     }
 
     form.addEventListener('submit', async function (event) {
@@ -46,8 +59,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             if (response.ok) {
                 window.location.href = '/';
-                console.log(result)
-                //alert('User registered successfully!');
+                console.log(result);
                 form.reset();
                 inputs.forEach(input => input.classList.remove('valid'));
                 submitButton.disabled = true;
@@ -59,25 +71,4 @@ document.addEventListener('DOMContentLoaded', function () {
             alert('An error occurred. Please try again later.');
         }
     });
-    /*
-    function verificarContrasena(password) {
-        // Verifica la longitud
-        if (password.length < 8) {
-            return false;
-        }
-
-        // Verifica si hay al menos una mayúscula
-        if (!/[A-Z]/.test(password)) {
-            return false;
-        }
-
-        // Verifica si hay al menos un carácter especial
-        if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
-            return false;
-        }
-
-        // La contraseña cumple con todos los requisitos
-        return true;
-    }
-    */
 });

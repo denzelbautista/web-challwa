@@ -69,3 +69,7 @@ body {
     background-color: #cccccc;
     cursor: not-allowed;
 }
+
+#phone-container {
+    display: none;
+}

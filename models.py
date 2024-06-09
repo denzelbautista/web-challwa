@@ -164,3 +164,11 @@ class Comentario(db.Model):
             'usuario_id': self.usuario_id,
             'contenido': self.contenido
         }
+
+
+class Compra(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    dni_usuario = db.Column(db.String(50), nullable=False)
+    productos = db.Column(db.Text, nullable=False)  # Almacena los ids de los productos comprados como una cadena separada por comas
+    monto = db.Column(db.Float, nullable=False)
+    fecha = db.Column(db.DateTime, default=datetime.utcnow)

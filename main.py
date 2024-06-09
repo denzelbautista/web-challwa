@@ -8,7 +8,7 @@ import requests
 # flask-login
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 # end flask-login
-from models import Usuario, Comentario, Pedido, LineaPedido, Producto
+from models import Usuario, Comentario, Pedido, LineaPedido, Producto, Compra
 from views import views_bp
 from users_controller import users_bp
 
@@ -172,7 +172,34 @@ def create_linea_pedido(pedido_id):
     finally:
         db.session.close()
 
+@app.route('/productos/<producto_id>', methods=['PATCH'])
+def update_stock(producto_id):
+    producto = Producto.query.get_or_404(producto_id)
+    cantidad = request.json.get('cantidad')
+    
+    if producto.stock >= cantidad:
+        producto.stock -= cantidad
+        db.session.commit()
+        return jsonify({'success': True, 'message': 'Stock actualizado'}), 200
+    else:
+        return jsonify({'success': False, 'message': 'Stock insuficiente'}), 400
 
+@app.route('/compras', methods=['POST'])
+def registrar_compra():
+    data = request.json
+    dni_usuario = data['dni_usuario']
+    productos = data['productos']  # Lista de productos comprados
+    monto = data['monto']
+
+    compra = Compra(
+        dni_usuario=dni_usuario,
+        productos=','.join(map(str, productos)),
+        monto=monto
+    )
+    db.session.add(compra)
+    db.session.commit()
+
+    return jsonify({'success': True, 'message': 'Compra registrada'}), 201
 
 if __name__ == '__main__':
     app.run(debug=True)
