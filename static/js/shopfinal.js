@@ -20,16 +20,15 @@ document.addEventListener('DOMContentLoaded', function() {
             .catch(error => console.error('Error:', error));
     }
 
-    function renderProductos(filter = null) {
+    function renderProductos() {
         container.innerHTML = '';
-        const filteredProductos = filter ? productos.filter(p => p.categoria.toLowerCase() === filter) : productos;
         const start = (currentPage - 1) * itemsPerPage;
         const end = start + itemsPerPage;
-        const paginatedProductos = filteredProductos.slice(start, end);
+        const paginatedProductos = productos.slice(start, end);
 
         paginatedProductos.forEach(producto => {
             const productoDiv = document.createElement('div');
-            productoDiv.className = 'col-lg-3 col-md-6 align-self-center mb-30 product-card';
+            productoDiv.className = 'product-card';
 
             productoDiv.innerHTML = `
                 <div class="item">
@@ -39,12 +38,19 @@ document.addEventListener('DOMContentLoaded', function() {
                     <div class="down-content">
                         <span class="product-category">${producto.categoria}</span>
                         <h4 class="product-name">${producto.nombre}</h4>
-                        <span class="product-price">$${producto.precio}</span>
-                        <button class="buy-button">Comprar</button>
+                        <span class="product-price">S/. ${producto.precio}</span>
+                        <button class="buy-button" data-id="${producto.id}">Comprar</button>
                     </div>
                 </div>
             `;
             container.appendChild(productoDiv);
+        });
+
+        document.querySelectorAll('.buy-button').forEach(button => {
+            button.addEventListener('click', function() {
+                const productId = this.getAttribute('data-id');
+                window.location.href = `/product-details.html?id=${productId}`;
+            });
         });
     }
 
@@ -68,21 +74,6 @@ document.addEventListener('DOMContentLoaded', function() {
             pagination.appendChild(li);
         }
     }
-
-    document.getElementById('all-products').addEventListener('click', function() {
-        renderProductos();
-        setupPagination();
-    });
-
-    document.getElementById('fish-products').addEventListener('click', function() {
-        renderProductos('pescados');
-        setupPagination();
-    });
-
-    document.getElementById('seafood-products').addEventListener('click', function() {
-        renderProductos('mariscos');
-        setupPagination();
-    });
 
     fetchProductos();
 });

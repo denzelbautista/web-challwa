@@ -69,7 +69,7 @@ class Usuario(UserMixin, db.Model):
 class Producto(db.Model):
     __tablename__ = 'productos'
 
-    id = db.Column(db.String(36), primary_key=True, default=str(uuid.uuid4()), unique=True)
+    id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()), unique=True)
     nombre = db.Column(db.String, nullable=False)
     descripcion = db.Column(db.Text, nullable=False)
     precio = db.Column(db.Numeric(10, 2), nullable=False)

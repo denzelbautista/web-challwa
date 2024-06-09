@@ -1,21 +1,36 @@
 .containerproductos {
-    padding: 20px;
+    /* quiero que izquierda derecha y abajo tengan 20 y arriba tenga 25*/
+    padding: 30px 20px 20px 20px;
 }
+
+.row {
+    justify-content: space-between;
+    display: flex;
+}
+
 .product-card {
     border: 1px solid #ddd;
-    border-radius: 10px;
-    padding: 15px;
+    border-radius: 20px;
+    padding: 20px;
     text-align: center;
-    margin-bottom: 20px;
+    
+    margin-bottom: 10px;
+
     transition: box-shadow 0.3s ease;
+    background-color: #f8f9fa;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
 }
 .product-card:hover {
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
 }
 .product-image {
     width: 100%;
-    height: 200px;
-    object-fit: cover;
+    height: 150px;
+    object-fit: contain;
+    background-color: #000;
     border-radius: 10px;
 }
 .product-category {
@@ -33,17 +48,18 @@
     margin-bottom: 10px;
 }
 .buy-button {
+    margin-left: 15px;
     display: inline-block;
     padding: 10px 20px;
-    background-color: #27ae60;
+    background-color: #007bff;
     color: #fff;
     border: none;
-    border-radius: 5px;
+    border-radius: 15px;
     cursor: pointer;
     text-decoration: none;
 }
 .buy-button:hover {
-    background-color: #2ecc71;
+    background-color: #0056b3;
 }
 .pagination {
     display: flex;
@@ -57,10 +73,40 @@
 .pagination a {
     padding: 8px 12px;
     border: 1px solid #ddd;
-    border-radius: 5px;
+    border-radius: 15px;
     text-decoration: none;
-    color: #333;
 }
 .pagination a:hover {
     background-color: #f1f1f1;
+}
+.is_active {
+    background-color: #007bff;
+    color: #fff;
+    border-color: #007bff;
+}
+@media (max-width: 768px) {
+    .product-card {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+}
+@media (min-width: 769px) and (max-width: 992px) {
+    .product-card {
+        flex: 0 0 48%;
+        max-width: 48%;
+    }
+}
+@media (min-width: 993px) {
+    .product-card {
+        flex: 0 0 23%;
+        max-width: 23%;
+    }
+}
+
+.pagination {
+    margin-top: 20px;
+}
+
+footer {
+    margin-top: 10px;
 }

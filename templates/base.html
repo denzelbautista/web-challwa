@@ -42,8 +42,6 @@
                         <a href="index.html" class="logo">
                             <img src="{{ url_for('static', filename='assets/images/oceanoLogo.png') }}" alt=""
                                 style="width: 220px;">
-                            <img src="{{ url_for('static', filename='assets/images/oceanoLogo.png') }}" alt=""
-                                style="width: 220px;">
                             <!-- Colocar el logo de challwacom -->
                         </a>
                         <!-- ***** Logo End ***** -->
@@ -51,11 +49,10 @@
                         <ul class="nav">
                             <li><a href="{{ url_for('views.index') }}" class="active">Inicio</a></li>
                             <li><a href="{{ url_for('views.shop') }}">Tienda</a></li>
-                            <li><a href="{{ url_for('views.sell') }}">Falta completar</a></li>
                             
                             {% if current_user.is_authenticated %}
                             <li><a href="{{ url_for('views.registroproducto') }}">Añadir Producto</a></li>
-                            <li><a href="{{ url_for('users.profile') }}">Mi Perfil</a></li>
+                            <li><a href="{{ url_for('views.profile') }}">Mi Perfil</a></li>
                             <li><a href="#" id="logout-button">Cerrar sesión</a></li>
                             <!-- Agrega un ID al botón de cerrar sesión -->
                             {% else %}
