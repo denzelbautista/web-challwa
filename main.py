@@ -8,7 +8,7 @@ import requests
 # flask-login
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 # end flask-login
-from models import Usuario, Comentario, Pedido, LineaPedido, Producto, Compra
+from models import Usuario, Comentario, Producto, Compra
 from views import views_bp
 from users_controller import users_bp
 
@@ -127,28 +127,6 @@ def get_producto(id):
         print(sys.exc_info())
         return jsonify({'success': False, 'message': 'Error obteniendo producto'}), 500
 
-@app.route('/pedidos', methods=['POST'])
-def create_pedido():
-    try:
-        data = request.json
-        # Extrae los campos necesarios del JSON
-
-        # Crea un nuevo pedido
-        nuevo_pedido = Pedido(...)  # Completa con los campos adecuados
-        db.session.add(nuevo_pedido)
-        db.session.commit()
-
-        return jsonify({'success': True, 'message': 'Pedido creado correctamente'}), 201
-    except Exception as e:
-        print(sys.exc_info())
-        db.session.rollback()
-        return jsonify({'success': False, 'message': 'Error creando pedido'}), 500
-    finally:
-        db.session.close()
-
-
-@app.route('/pedidos/<string:pedido_id>/lineas_pedido', methods=['POST'])
-def create_linea_pedido(pedido_id):
     try:
         data = request.json
         # Extrae los campos necesarios del JSON
@@ -183,6 +161,29 @@ def update_stock(producto_id):
         return jsonify({'success': True, 'message': 'Stock actualizado'}), 200
     else:
         return jsonify({'success': False, 'message': 'Stock insuficiente'}), 400
+
+@app.route('/usuario/<product_id>/producto', methods=['GET'])
+def get_usuario_by_product_id(product_id):
+    try:
+        producto = Producto.query.get(product_id)
+        if not producto:
+            return jsonify({"success": False, "message": "Producto no encontrado"}), 404
+
+        usuario = Usuario.query.get(producto.vendedor_id)
+        if not usuario:
+            return jsonify({"success": False, "message": "Usuario no encontrado"}), 404
+
+        return jsonify({
+            "success": True,
+            "usuario": {
+                "nombre": usuario.nombre,
+                "telefono": usuario.telefono
+            }
+        })
+
+    except Exception as e:
+        return jsonify({"success": False, "message": str(e)}), 500
+
 
 @app.route('/compras', methods=['POST'])
 def registrar_compra():

@@ -28,7 +28,6 @@ class Usuario(UserMixin, db.Model):
     updated_at = db.Column(db.String, default=current_time, onupdate=current_time)
     # relaciones con otras tablas
     productos = db.relationship('Producto', back_populates='vendedor')
-    pedidos = db.relationship('Pedido', back_populates='comprador')
     comentarios = db.relationship('Comentario', back_populates='usuario')
 
     def serialize(self):
@@ -45,12 +44,13 @@ class Usuario(UserMixin, db.Model):
             'nombre_empresa' : self.nombre_empresa
         }
 
-    def __init__(self, email, password, nombre, apellido, role):
+    def __init__(self, email, password, nombre, apellido, role,telefono):
         self.email = email
         self.password = password
         self.nombre = nombre
         self.apellido = apellido
         self.role = role
+        self.telefono = telefono
 
     def insert(self):
         try:
@@ -82,7 +82,6 @@ class Producto(db.Model):
     updated_at = db.Column(db.String, default=current_time, onupdate=current_time)
     # relaciones con las otras tablas
     vendedor = db.relationship('Usuario', back_populates='productos')
-    lineas_pedido = db.relationship('LineaPedido', back_populates='producto')
     comentarios = db.relationship('Comentario', back_populates='producto')
 
     def serialize(self):
@@ -95,52 +94,6 @@ class Producto(db.Model):
             'stock' : self.stock,
             'vendedor_id' : self.vendedor_id,
             'imagen_producto' : self.imagen_producto
-        }
-
-class Pedido(db.Model):
-    __tablename__ = 'pedidos'
-
-    id = db.Column(db.String(36), primary_key=True, default=str(uuid.uuid4()), unique=True)
-    comprador_id = db.Column(db.Integer, db.ForeignKey('usuarios.id'), nullable=False)
-    total = db.Column(db.Numeric(10, 2), nullable=False)
-    estado = db.Column(db.Enum('pendiente', 'en_proceso', 'completado', 'cancelado', name='order_status'), nullable=False)
-    # fechas
-    created_at = db.Column(db.String, default=current_time)
-    updated_at = db.Column(db.String, default=current_time, onupdate=current_time)
-    # relaciones con las otras tablas
-    comprador = db.relationship('Usuario', back_populates='pedidos')
-    lineas_pedido = db.relationship('LineaPedido', back_populates='pedido')
-
-    def serialize(self):
-        return {
-            'id': self.id,
-            'comprador_id': self.comprador_id,
-            'total': float(self.total),  # Convertir a float si es necesario
-            'estado': self.estado.value
-        }
-
-class LineaPedido(db.Model):
-    __tablename__ = 'lineas_pedido'
-
-    id = db.Column(db.String(36), primary_key=True, default=str(uuid.uuid4()), unique=True)
-    pedido_id = db.Column(db.Integer, db.ForeignKey('pedidos.id'), nullable=False)
-    producto_id = db.Column(db.Integer, db.ForeignKey('productos.id'), nullable=False)
-    cantidad = db.Column(db.Integer, nullable=False)
-    precio_unitario = db.Column(db.Numeric(10, 2), nullable=False)
-    # fechas
-    created_at = db.Column(db.String, default=current_time)
-    updated_at = db.Column(db.String, default=current_time, onupdate=current_time)
-    # relaciones con las otras tablas
-    pedido = db.relationship('Pedido', back_populates='lineas_pedido')
-    producto = db.relationship('Producto', back_populates='lineas_pedido')
-
-    def serialize(self):
-        return {
-            'id': self.id,
-            'pedido_id': self.pedido_id,
-            'producto_id': self.producto_id,
-            'cantidad': self.cantidad,
-            'precio_unitario': float(self.precio_unitario),  # Convertir a float si es necesario
         }
 
 class Comentario(db.Model):
@@ -164,7 +117,6 @@ class Comentario(db.Model):
             'usuario_id': self.usuario_id,
             'contenido': self.contenido
         }
-
 
 class Compra(db.Model):
     id = db.Column(db.Integer, primary_key=True)

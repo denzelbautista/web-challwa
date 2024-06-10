@@ -44,6 +44,12 @@ def create_usuario():
             if role not in ('comprador', 'vendedor'):
                 list_errors.append('rol no valido')
 
+        if role == 'vendedor' and 'telefono' not in data:
+            list_errors.append('telefono requerido')
+        else:
+            telefono = data.get('telefono')
+
+
         if 'password' not in data:
             list_errors.append('contraseña requerida')
         else:
@@ -54,7 +60,7 @@ def create_usuario():
             returned_code = 400
         else:
             nuevo_usuario = Usuario(
-                email=email, password=password_hashed, role=role, nombre=nombre, apellido=apellido)
+                email=email, password=password_hashed, role=role, nombre=nombre, apellido=apellido, telefono=telefono)
             user_created_id = nuevo_usuario.insert()
 
             response = jsonify({
