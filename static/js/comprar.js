@@ -118,7 +118,7 @@ document.addEventListener('DOMContentLoaded', async function () {
                 producto.telefonoVendedor = result.usuario.telefono;
 
                 const li = document.createElement('li');
-                li.textContent = `${producto.nombre} - S/. ${producto.precio} - Cantidad: ${producto.cantidad} - Teléfono del vendedor: ${producto.telefonoVendedor}`;
+                li.textContent = `${producto.nombre} - S/. ${producto.precio} - Cantidad: ${producto.cantidad}`;
                 productosCarrito.appendChild(li);
 
                 // Verifica si los valores son números válidos
